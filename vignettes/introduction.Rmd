@@ -1,0 +1,162 @@
+---
+title: "Introduction to gkwreg2"
+author: "José Evandeilton Lopes"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to gkwreg2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>",
+    fig.width = 7,
+    fig.height = 5
+)
+```
+
+## Overview
+
+The **gkwreg2** package provides regression modeling for bounded data in (0, 1) 
+using the Generalized Kumaraswamy distribution family. This includes proportions, 
+rates, percentages, and any continuous data restricted to the unit interval.
+
+## Installation
+
+```{r eval=FALSE}
+# Install from GitHub
+remotes::install_github("evandeilton/gkwdist")
+remotes::install_github("evandeilton/gkwreg2")
+```
+
+## Distribution Families
+
+The package supports 7 distribution families:
+- **gkw**: Generalized Kumaraswamy (5 parameters)
+- **bkw**: Beta-Kumaraswamy (4 parameters)
+- **kkw**: Kumaraswamy-Kumaraswamy (4 parameters)
+- **ekw**: Exponentiated Kumaraswamy (3 parameters)
+- **mc**: McDonald/Beta Power (3 parameters)
+- **kw**: Kumaraswamy (2 parameters)
+- **beta**: Beta (2 parameters)
+
+## Quick Example
+
+```{r example, message=FALSE, warning=FALSE}
+library(gkwreg2)
+library(gkwdist)
+
+# Simulate data
+set.seed(123)
+n <- 300
+x1 <- runif(n, -2, 2)
+x2 <- rnorm(n)
+
+# Generate response with known parameters
+alpha_true <- exp(0.8 + 0.3 * x1)
+beta_true <- exp(1.2 - 0.2 * x2)
+y <- rkw(n, alpha = alpha_true, beta = beta_true)
+y <- pmax(pmin(y, 1 - 1e-7), 1e-7)
+
+df <- data.frame(y = y, x1 = x1, x2 = x2)
+
+# Fit Kumaraswamy regression
+# alpha depends on x1, beta depends on x2
+fit <- gkwreg2(y ~ x1 | x2, data = df, family = "kw")
+
+summary(fit)
+```
+
+## Extended Formula Syntax
+
+The pipe `|` separator allows specifying different covariates for each parameter:
+
+```{r formula}
+# Intercept-only model
+fit0 <- gkwreg2(y ~ 1, data = df, family = "kw")
+
+# x1 for alpha only (beta = intercept)
+fit1 <- gkwreg2(y ~ x1, data = df, family = "kw")
+
+# x1 for alpha, x2 for beta
+fit2 <- gkwreg2(y ~ x1 | x2, data = df, family = "kw")
+
+# Same covariates for both
+fit3 <- gkwreg2(y ~ x1 + x2 | x1 + x2, data = df, family = "kw")
+```
+
+## Model Comparison
+
+```{r comparison}
+# Compare models using AIC
+AIC(fit0, fit1, fit2, fit3)
+
+# Likelihood ratio tests
+anova(fit0, fit1, fit2, test = "Chisq")
+```
+
+## Predictions
+
+```{r predictions}
+# Predicted means
+pred_mean <- predict(fit2, type = "response")
+
+# Distribution parameters
+pred_params <- predict(fit2, type = "parameters")
+head(data.frame(alpha = pred_params$alpha, beta = pred_params$beta))
+
+# Quantiles
+pred_q <- predict(fit2, type = "quantile", at = c(0.1, 0.5, 0.9))
+head(pred_q)
+```
+
+## Diagnostic Plots
+
+```{r diagnostics, fig.height=8}
+par(mfrow = c(2, 2))
+plot(fit2, which = c(2, 3, 5, 6), ask = FALSE)
+```
+
+## Comparing Distribution Families
+
+```{r families, warning=FALSE}
+# Fit different families
+fit_kw <- gkwreg2(y ~ x1 | x2, data = df, family = "kw")
+fit_beta <- gkwreg2(y ~ x1 | x2, data = df, family = "beta")
+
+# Compare
+data.frame(
+    Family = c("Kumaraswamy", "Beta"),
+    LogLik = c(logLik(fit_kw), logLik(fit_beta)),
+    AIC = c(AIC(fit_kw), AIC(fit_beta)),
+    BIC = c(BIC(fit_kw), BIC(fit_beta))
+)
+```
+
+## Optimization Control
+
+Fine-tune the optimization with `gkw_control()`:
+
+```{r control, eval=FALSE}
+# Use BFGS optimizer with more iterations
+fit <- gkwreg2(y ~ x1,
+    data = df, family = "kw",
+    control = gkw_control(method = "BFGS", maxit = 500)
+)
+
+# Fast fitting without standard errors
+fit_fast <- gkwreg2(y ~ x1,
+    data = df, family = "kw",
+    control = gkw_control(hessian = FALSE)
+)
+```
+
+## See Also
+
+- `?gkwreg2` - Main fitting function
+- `?gkw_control` - Optimization control
+- `?predict.gkwreg2` - Prediction types
+- `?plot.gkwreg2` - Diagnostic plots

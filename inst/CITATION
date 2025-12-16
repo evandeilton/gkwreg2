@@ -1,0 +1,16 @@
+citHeader("To cite gkwreg2 in publications use:")
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "gkwreg2: Generalized Kumaraswamy Regression Models for Bounded Data",
+  author   = person("José Evandeilton", "Lopes"),
+  year     = "2025",
+  note     = "R package version 0.1.1",
+  url      = "https://github.com/evandeilton/gkwreg2",
+  textVersion = paste(
+    "Lopes, J. E. (2025).",
+    "gkwreg2: Generalized Kumaraswamy Regression Models for Bounded Data.",
+    "R package version 0.1.1.",
+    "https://github.com/evandeilton/gkwreg2"
+  )
+)

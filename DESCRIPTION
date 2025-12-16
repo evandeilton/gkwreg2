@@ -28,7 +28,10 @@ Suggests:
     testthat (>= 3.0.0),
     numDeriv,
     ggplot2,
-    covr
+    covr,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/evandeilton/gkwreg2, https://evandeilton.github.io/gkwreg2/
