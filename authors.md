@@ -8,11 +8,11 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/evandeilton/gkwreg2/blob/main/DESCRIPTION)
+[`inst/CITATION`](https://github.com/evandeilton/gkwreg2/blob/main/inst/CITATION)
 
-Lopes J (2025). *gkwreg2: Generalized Kumaraswamy Regression Models for
-Bounded Data*. R package version 0.1.1,
-<https://github.com/evandeilton/gkwreg2>.
+Lopes, J. E. (2025). gkwreg2: Generalized Kumaraswamy Regression Models
+for Bounded Data. R package version 0.1.1.
+https://github.com/evandeilton/gkwreg2
 
     @Manual{,
       title = {gkwreg2: Generalized Kumaraswamy Regression Models for Bounded Data},

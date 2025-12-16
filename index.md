@@ -249,7 +249,7 @@ fit_custom <- gkwreg2(y ~ x1 + x2 | x3, data = df, family = "kw",
 ## Documentation and Support
 
 - **Reference Manual**:
-  [`help(package = "gkwreg2")`](https://rdrr.io/pkg/gkwreg2/man)
+  [`help(package = "gkwreg2")`](https://evandeilton.github.io/gkwreg2/reference)
 - **Function Help**:
   [`?gkwreg2`](https://evandeilton.github.io/gkwreg2/reference/gkwreg2.md),
   [`?predict.gkwreg2`](https://evandeilton.github.io/gkwreg2/reference/predict.gkwreg2.md),
