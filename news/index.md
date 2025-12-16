@@ -1,5 +1,17 @@
 # Changelog
 
+## gkwreg2 0.1.3
+
+## gkwreg2 0.1.2
+
+### New Features
+
+- Added introductory vignette with comprehensive examples
+- Added CITATION file for academic references
+- Updated pkgdown site with flatly theme
+
+------------------------------------------------------------------------
+
 ## gkwreg2 0.1.1
 
 ### New Features

@@ -3,7 +3,7 @@ pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   introduction: introduction.html
-last_built: 2025-12-16T06:10Z
+last_built: 2025-12-16T12:44Z
 urls:
   reference: https://evandeilton.github.io/gkwreg2/reference
   article: https://evandeilton.github.io/gkwreg2/articles
