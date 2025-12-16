@@ -1,22 +1,56 @@
+# gkwreg2 0.1.1
+
+## New Features
+
+* Added GitHub Actions R-CMD-check workflow
+* Comprehensive README with badges and examples
+* Full API compatibility with gkwreg package
+
+## Bug Fixes
+
+* Fixed `predict.gkwreg2()` to correctly access `coef_list` instead of flat `coefficients`
+* Fixed NA handling in variance-covariance matrix diagonal check
+* Added all required stats imports (AIC, BIC, resid, etc.)
+* Corrected `gkw_control()` to use `factr`/`pgtol` for L-BFGS-B optimizer
+
+## Documentation
+
+* All examples now include complete data generation code
+* Removed VignetteBuilder without vignettes
+* Cleaned up DESCRIPTION metadata
+
+---
+
 # gkwreg2 0.1.0
 
 ## Initial Release
 
-* First version of gkwreg2, a pure RcppArmadillo replacement for gkwreg
-* Implements maximum likelihood estimation without TMB dependency
-* Uses analytical gradients from gkwdist package
+* Pure RcppArmadillo implementation (no TMB dependency)
+* Support for 7 distribution families: gkw, bkw, kkw, ekw, mc, kw, beta
+* Extended formula syntax: `y ~ alpha_formula | beta_formula | ...`
+* Analytical gradients via gkwdist package
+* Multiple optimizers: nlminb, BFGS, L-BFGS-B, Nelder-Mead, CG
+* Parameter clamping for numerical stability
+* Moment-based starting values for robust convergence
 
-### Features
+## S3 Methods
 
-* Support for 7 distribution families: GKw, BKw, KKw, EKw, MC, Kw, Beta
-* 8 link functions: log, sqrt, inverse, identity, logit, probit, cloglog, cauchy
-* Extended formula syntax with `|` separators for different covariates per parameter
-* Complete S3 interface: print, summary, coef, vcov, confint, logLik, AIC, BIC, predict, residuals, plot, anova
-* 4 residual types: response, pearson, deviance, quantile (Dunn & Smyth)
-* 6 diagnostic plot types
-* Model comparison via likelihood ratio tests
+* `coef()`, `vcov()`, `confint()` - coefficient extraction and inference
+* `logLik()`, `AIC()`, `BIC()`, `nobs()` - model fit statistics
+* `fitted()`, `residuals()` - fitted values and residuals (response, pearson, quantile)
+* `predict()` - predictions (response, parameters, link, quantile, density, variance)
+* `summary()`, `print()` - model summaries
+* `anova()` - likelihood ratio tests for nested models
+* `plot()` - 6 diagnostic plot types
+* `formula()`, `model.frame()`, `model.matrix()`, `update()` - model utilities
 
-### Documentation
+## Compatibility
 
-* Full roxygen2 documentation for all exported functions
-* Package vignettes (coming soon)
+* Full output structure compatibility with gkwreg
+* Same coefficient naming convention (colon-separated)
+* Same class inheritance: `c("gkwreg2", "gkwreg")`
+
+## Testing
+
+* 370+ unit tests covering all families and methods
+* R CMD check --as-cran: 0 errors, 0 warnings
