@@ -12,13 +12,13 @@ maximum likelihood estimation with analytical gradients via RcppArmadillo.
 \section{Distribution Families}{
 
 \itemize{
-\item \strong{gkw}: Generalized Kumaraswamy (5 parameters: α, β, γ, δ, λ)
-\item \strong{bkw}: Beta-Kumaraswamy (4 parameters: α, β, γ, δ)
-\item \strong{kkw}: Kumaraswamy-Kumaraswamy (4 parameters: α, β, δ, λ)
-\item \strong{ekw}: Exponentiated Kumaraswamy (3 parameters: α, β, λ)
-\item \strong{mc}: McDonald (3 parameters: γ, δ, λ)
-\item \strong{kw}: Kumaraswamy (2 parameters: α, β)
-\item \strong{beta}: Beta (2 parameters: γ, δ)
+\item \strong{gkw}: Generalized Kumaraswamy (5 parameters: \eqn{\alpha}, \eqn{\beta}, \eqn{\gamma}, \eqn{\delta}, \eqn{\lambda})
+\item \strong{bkw}: Beta-Kumaraswamy (4 parameters: \eqn{\alpha}, \eqn{\beta}, \eqn{\gamma}, \eqn{\delta})
+\item \strong{kkw}: Kumaraswamy-Kumaraswamy (4 parameters: \eqn{\alpha}, \eqn{\beta}, \eqn{\delta}, \eqn{\lambda})
+\item \strong{ekw}: Exponentiated Kumaraswamy (3 parameters: \eqn{\alpha}, \eqn{\beta}, \eqn{\lambda})
+\item \strong{mc}: McDonald (3 parameters: \eqn{\gamma}, \eqn{\delta}, \eqn{\lambda})
+\item \strong{kw}: Kumaraswamy (2 parameters: \eqn{\alpha}, \eqn{\beta})
+\item \strong{beta}: Beta (2 parameters: \eqn{\gamma}, \eqn{\delta})
 }
 }
 
@@ -36,6 +36,7 @@ maximum likelihood estimation with analytical gradients via RcppArmadillo.
 Useful links:
 \itemize{
   \item \url{https://github.com/evandeilton/gkwreg2}
+  \item \url{https://evandeilton.github.io/gkwreg2/}
   \item Report bugs at \url{https://github.com/evandeilton/gkwreg2/issues}
 }
 

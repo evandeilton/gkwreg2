@@ -43,97 +43,97 @@ residuals.gkwreg2 <- function(
   type = c("response", "pearson", "deviance", "quantile"),
   ...
 ) {
-    type <- match.arg(type)
+  type <- match.arg(type)
 
-    y <- object$y
-    mu <- object$fitted.values
-    params <- object$fitted.params
-    n <- length(y)
+  y <- object$y
+  mu <- object$fitted.values
+  params <- object$fitted.params
+  n <- length(y)
 
-    if (type == "response") {
-        return(y - mu)
+  if (type == "response") {
+    return(y - mu)
+  }
+
+  if (type == "pearson") {
+    # Compute variance for each observation
+    vars <- predict(object, type = "variance")
+    vars <- pmax(vars, .Machine$double.eps) # Avoid division by zero
+    return((y - mu) / sqrt(vars))
+  }
+
+  if (type == "deviance") {
+    # Deviance residuals: sign(y - mu) * sqrt(2 * (ll_sat - ll_fit))
+    # For bounded distributions, saturated model has y_i as parameter
+
+    d_func <- switch(object$family,
+      gkw = gkwdist::dgkw,
+      bkw = gkwdist::dbkw,
+      kkw = gkwdist::dkkw,
+      ekw = gkwdist::dekw,
+      mc = gkwdist::dmc,
+      kw = gkwdist::dkw,
+      beta = gkwdist::dbeta_,
+      stop("Unknown family")
+    )
+
+    dev_res <- numeric(n)
+    for (i in seq_len(n)) {
+      par_i <- lapply(params, function(p) p[i])
+
+      # Log-density at observed value
+      log_dens <- tryCatch(
+        {
+          args <- c(list(x = y[i], log = TRUE), par_i)
+          do.call(d_func, args)
+        },
+        error = function(e) -Inf
+      )
+
+      # Saturated log-density (approximation: use very concentrated distribution)
+      # For simplicity, use 0 (perfect fit would have infinite density)
+      log_dens_sat <- 0
+
+      d_i <- 2 * (log_dens_sat - log_dens)
+      dev_res[i] <- sign(y[i] - mu[i]) * sqrt(pmax(d_i, 0))
     }
 
-    if (type == "pearson") {
-        # Compute variance for each observation
-        vars <- predict(object, type = "variance")
-        vars <- pmax(vars, .Machine$double.eps) # Avoid division by zero
-        return((y - mu) / sqrt(vars))
+    return(dev_res)
+  }
+
+  if (type == "quantile") {
+    # Randomized quantile residuals
+    p_func <- switch(object$family,
+      gkw = gkwdist::pgkw,
+      bkw = gkwdist::pbkw,
+      kkw = gkwdist::pkkw,
+      ekw = gkwdist::pekw,
+      mc = gkwdist::pmc,
+      kw = gkwdist::pkw,
+      beta = gkwdist::pbeta_,
+      stop("Unknown family")
+    )
+
+    u <- numeric(n)
+    for (i in seq_len(n)) {
+      par_i <- lapply(params, function(p) p[i])
+
+      u[i] <- tryCatch(
+        {
+          args <- c(list(q = y[i]), par_i)
+          do.call(p_func, args)
+        },
+        error = function(e) NA_real_
+      )
     }
 
-    if (type == "deviance") {
-        # Deviance residuals: sign(y - mu) * sqrt(2 * (ll_sat - ll_fit))
-        # For bounded distributions, saturated model has y_i as parameter
+    # Clamp to avoid infinite qnorm values
+    u <- pmin(pmax(u, .Machine$double.eps), 1 - .Machine$double.eps)
 
-        d_func <- switch(object$family,
-            gkw = gkwdist::dgkw,
-            bkw = gkwdist::dbkw,
-            kkw = gkwdist::dkkw,
-            ekw = gkwdist::dekw,
-            mc = gkwdist::dmc,
-            kw = gkwdist::dkw,
-            beta = gkwdist::dbeta_,
-            stop("Unknown family")
-        )
+    # Transform to standard normal
+    qres <- qnorm(u)
 
-        dev_res <- numeric(n)
-        for (i in seq_len(n)) {
-            par_i <- lapply(params, function(p) p[i])
-
-            # Log-density at observed value
-            log_dens <- tryCatch(
-                {
-                    args <- c(list(x = y[i], log = TRUE), par_i)
-                    do.call(d_func, args)
-                },
-                error = function(e) -Inf
-            )
-
-            # Saturated log-density (approximation: use very concentrated distribution)
-            # For simplicity, use 0 (perfect fit would have infinite density)
-            log_dens_sat <- 0
-
-            d_i <- 2 * (log_dens_sat - log_dens)
-            dev_res[i] <- sign(y[i] - mu[i]) * sqrt(pmax(d_i, 0))
-        }
-
-        return(dev_res)
-    }
-
-    if (type == "quantile") {
-        # Randomized quantile residuals
-        p_func <- switch(object$family,
-            gkw = gkwdist::pgkw,
-            bkw = gkwdist::pbkw,
-            kkw = gkwdist::pkkw,
-            ekw = gkwdist::pekw,
-            mc = gkwdist::pmc,
-            kw = gkwdist::pkw,
-            beta = gkwdist::pbeta_,
-            stop("Unknown family")
-        )
-
-        u <- numeric(n)
-        for (i in seq_len(n)) {
-            par_i <- lapply(params, function(p) p[i])
-
-            u[i] <- tryCatch(
-                {
-                    args <- c(list(q = y[i]), par_i)
-                    do.call(p_func, args)
-                },
-                error = function(e) NA_real_
-            )
-        }
-
-        # Clamp to avoid infinite qnorm values
-        u <- pmin(pmax(u, .Machine$double.eps), 1 - .Machine$double.eps)
-
-        # Transform to standard normal
-        qres <- qnorm(u)
-
-        return(qres)
-    }
+    return(qres)
+  }
 }
 
 #' Residuals Alias

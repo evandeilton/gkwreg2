@@ -37,21 +37,21 @@ gkw_control <- function(
   keep_data = TRUE,
   use_gradient = TRUE
 ) {
-    method <- match.arg(method)
+  method <- match.arg(method)
 
-    structure(
-        list(
-            method = method,
-            maxit = as.integer(maxit),
-            reltol = reltol,
-            trace = as.integer(trace),
-            hessian = hessian,
-            start = start,
-            keep_data = keep_data,
-            use_gradient = use_gradient
-        ),
-        class = "gkw_control"
-    )
+  structure(
+    list(
+      method = method,
+      maxit = as.integer(maxit),
+      reltol = reltol,
+      trace = as.integer(trace),
+      hessian = hessian,
+      start = start,
+      keep_data = keep_data,
+      use_gradient = use_gradient
+    ),
+    class = "gkw_control"
+  )
 }
 
 #' Print gkw_control Object
@@ -61,11 +61,11 @@ gkw_control <- function(
 #'
 #' @export
 print.gkw_control <- function(x, ...) {
-    cat("gkwreg2 Control Parameters:\n")
-    cat("  Method:", x$method, "\n")
-    cat("  Max iterations:", x$maxit, "\n")
-    cat("  Relative tolerance:", format(x$reltol, scientific = TRUE), "\n")
-    cat("  Compute Hessian:", x$hessian, "\n")
-    cat("  Use gradient:", x$use_gradient, "\n")
-    invisible(x)
+  cat("gkwreg2 Control Parameters:\n")
+  cat("  Method:", x$method, "\n")
+  cat("  Max iterations:", x$maxit, "\n")
+  cat("  Relative tolerance:", format(x$reltol, scientific = TRUE), "\n")
+  cat("  Compute Hessian:", x$hessian, "\n")
+  cat("  Use gradient:", x$use_gradient, "\n")
+  invisible(x)
 }

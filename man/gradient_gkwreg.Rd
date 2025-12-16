@@ -33,6 +33,6 @@ gradient_gkwreg(
 Gradient vector (same length as theta_concat)
 }
 \description{
-Uses chain rule: ∂ℓ/∂β_p = Xᵀ_p × (∂ℓ/∂θ_p × ∂θ_p/∂η_p)
+Uses chain rule: \eqn{\partial\ell/\partial\beta_p = X^T_p \times (\partial\ell/\partial\theta_p \times \partial\theta_p/\partial\eta_p)}
 }
 \keyword{internal}

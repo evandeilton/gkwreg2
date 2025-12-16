@@ -18,13 +18,13 @@ NULL
 #'
 #' @section Distribution Families:
 #' \itemize{
-#'   \item \strong{gkw}: Generalized Kumaraswamy (5 parameters: α, β, γ, δ, λ)
-#'   \item \strong{bkw}: Beta-Kumaraswamy (4 parameters: α, β, γ, δ)
-#'   \item \strong{kkw}: Kumaraswamy-Kumaraswamy (4 parameters: α, β, δ, λ)
-#'   \item \strong{ekw}: Exponentiated Kumaraswamy (3 parameters: α, β, λ)
-#'   \item \strong{mc}: McDonald (3 parameters: γ, δ, λ)
-#'   \item \strong{kw}: Kumaraswamy (2 parameters: α, β)
-#'   \item \strong{beta}: Beta (2 parameters: γ, δ)
+#'   \item \strong{gkw}: Generalized Kumaraswamy (5 parameters: \eqn{\alpha}, \eqn{\beta}, \eqn{\gamma}, \eqn{\delta}, \eqn{\lambda})
+#'   \item \strong{bkw}: Beta-Kumaraswamy (4 parameters: \eqn{\alpha}, \eqn{\beta}, \eqn{\gamma}, \eqn{\delta})
+#'   \item \strong{kkw}: Kumaraswamy-Kumaraswamy (4 parameters: \eqn{\alpha}, \eqn{\beta}, \eqn{\delta}, \eqn{\lambda})
+#'   \item \strong{ekw}: Exponentiated Kumaraswamy (3 parameters: \eqn{\alpha}, \eqn{\beta}, \eqn{\lambda})
+#'   \item \strong{mc}: McDonald (3 parameters: \eqn{\gamma}, \eqn{\delta}, \eqn{\lambda})
+#'   \item \strong{kw}: Kumaraswamy (2 parameters: \eqn{\alpha}, \eqn{\beta})
+#'   \item \strong{beta}: Beta (2 parameters: \eqn{\gamma}, \eqn{\delta})
 #' }
 #'
 #' @section Main Functions:
@@ -42,8 +42,8 @@ NULL
 "_PACKAGE"
 
 .onLoad <- function(libname, pkgname) {
-    # Ensure gkwdist is loaded
-    if (!requireNamespace("gkwdist", quietly = TRUE)) {
-        warning("Package 'gkwdist' is required but not available")
-    }
+  # Ensure gkwdist is loaded
+  if (!requireNamespace("gkwdist", quietly = TRUE)) {
+    warning("Package 'gkwdist' is required but not available")
+  }
 }

@@ -23,7 +23,7 @@ the original training data.}
 \describe{
 \item{\code{"response"}}{Expected mean E(Y|X) (default)}
 \item{\code{"parameters"}}{All distribution parameters}
-\item{\code{"link"}}{Linear predictors (η)}
+\item{\code{"link"}}{Linear predictors (\eqn{\eta})}
 \item{\code{"quantile"}}{Quantiles at specified probabilities}
 \item{\code{"density"}}{Density at specified y values}
 \item{\code{"variance"}}{Conditional variance Var(Y|X)}

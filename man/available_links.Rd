@@ -8,7 +8,7 @@ available_links(type = c("positive", "probability", "all"))
 }
 \arguments{
 \item{type}{Type of parameter: \code{"positive"} for positive parameters
-(α, β, γ, λ), or \code{"probability"} for probability parameters (δ ∈ (0,1)).}
+(\eqn{\alpha}, \eqn{\beta}, \eqn{\gamma}, \eqn{\lambda}), or \code{"probability"} for probability parameters (\eqn{\delta} in (0,1)).}
 }
 \value{
 Character vector of link function names.
