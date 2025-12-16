@@ -1,4 +1,4 @@
-# gkwreg2: Generalized Kumaraswamy Regression Models for Bounded Data <img src="man/figures/gkwreg2.png" align="right" height="138" />
+# gkwreg2: Generalized Kumaraswamy Regression Models for Bounded Data <img src="man/figures/gkwreg2.png" align="right" height="138" alt="gkwreg2 logo" />
 
 [![R-CMD-check](https://github.com/evandeilton/gkwreg2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/evandeilton/gkwreg2/actions/workflows/R-CMD-check.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

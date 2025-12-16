@@ -1,0 +1,24 @@
+url: https://evandeilton.github.io/gkwreg2/
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+home:
+  title: gkwreg2 - Generalized Kumaraswamy Regression
+  description: Regression models for bounded data using the GKw distribution family
+
+navbar:
+  structure:
+    left: [intro, reference, news]
+    right: [search, github]
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/evandeilton/gkwreg2
+
+reference:
+  - title: All functions
+    desc: ~
+    contents:
+      - starts_with("")

@@ -31,5 +31,5 @@ Suggests:
     covr
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
-URL: https://github.com/evandeilton/gkwreg2
+URL: https://github.com/evandeilton/gkwreg2, https://evandeilton.github.io/gkwreg2/
 BugReports: https://github.com/evandeilton/gkwreg2/issues
