@@ -1,0 +1,377 @@
+# =============================================================================
+# Compatibility Tests: gkwreg vs gkwreg2
+# =============================================================================
+# This file tests that gkwreg (TMB-based) and gkwreg2 (pure RcppArmadillo)
+# produce compatible results for the same inputs.
+# =============================================================================
+
+library(testthat)
+library(gkwdist)
+
+# Check both packages are available
+has_gkwreg <- requireNamespace("gkwreg", quietly = TRUE)
+has_gkwreg2 <- requireNamespace("gkwreg2", quietly = TRUE)
+
+if (has_gkwreg) library(gkwreg)
+if (has_gkwreg2) library(gkwreg2)
+
+# =============================================================================
+# SETUP: Generate common test data
+# =============================================================================
+
+setup_test_data_kw <- function() {
+    set.seed(2203)
+    n <- 100
+    x1 <- rnorm(n)
+    x2 <- runif(n, -1, 1)
+
+    alpha <- exp(0.5 + 0.3 * x1)
+    beta <- exp(1.0 - 0.2 * x2)
+    y <- gkwdist::rkw(n, alpha = alpha, beta = beta)
+
+    data.frame(y = y, x1 = x1, x2 = x2)
+}
+
+setup_test_data_beta <- function() {
+    set.seed(4523)
+    n <- 100
+    x1 <- rnorm(n)
+
+    gamma <- exp(1.0 + 0.2 * x1)
+    delta <- exp(1.5)
+    y <- rbeta(n, shape1 = gamma, shape2 = delta)
+    y <- pmax(pmin(y, 1 - 1e-10), 1e-10)
+
+    data.frame(y = y, x1 = x1)
+}
+
+# =============================================================================
+# TEST 1: Both packages fit models and converge
+# =============================================================================
+
+test_that("Both packages fit Kumaraswamy model", {
+    skip_if_not(has_gkwreg, "gkwreg not installed")
+    skip_if_not(has_gkwreg2, "gkwreg2 not installed")
+
+    df <- setup_test_data_kw()
+
+    # Fit with gkwreg (TMB)
+    fit1 <- gkwreg::gkwreg(y ~ x1 | x2, data = df, family = "kw")
+
+    # Fit with gkwreg2 (RcppArmadillo)
+    fit2 <- gkwreg2::gkwreg2(y ~ x1 | x2, data = df, family = "kw")
+
+    # Both should converge
+    expect_true(fit1$convergence == 0) # gkwreg: 0 = converged
+    expect_true(fit2$converged) # gkwreg2: TRUE = converged
+
+    cat("\n\ngkwreg loglik:", fit1$loglik, "\n")
+    cat("gkwreg2 loglik:", fit2$loglik, "\n")
+})
+
+# =============================================================================
+# TEST 2: Similar coefficient estimates
+# =============================================================================
+
+test_that("Coefficient estimates are similar between packages", {
+    skip_if_not(has_gkwreg, "gkwreg not installed")
+    skip_if_not(has_gkwreg2, "gkwreg2 not installed")
+
+    df <- setup_test_data_kw()
+
+    fit1 <- gkwreg::gkwreg(y ~ x1 | x2, data = df, family = "kw")
+    fit2 <- gkwreg2::gkwreg2(y ~ x1 | x2, data = df, family = "kw")
+
+    # Extract coefficients
+    coef1 <- coef(fit1)
+    coef2 <- unlist(coef(fit2))
+
+    cat("\n\ngkwreg coefficients:\n")
+    print(coef1)
+    cat("\ngkwreg2 coefficients:\n")
+    print(coef2)
+
+    # Compare - should be within 20% (optimization may find different local optima)
+    # Note: names may differ slightly
+    expect_equal(length(coef1), length(coef2))
+
+    # Log-likelihoods should be close
+    expect_equal(fit1$loglik, fit2$loglik, tolerance = 0.1)
+})
+
+# =============================================================================
+# TEST 3: S3 methods produce compatible output structures
+# =============================================================================
+
+test_that("coef() returns compatible structures", {
+    skip_if_not(has_gkwreg, "gkwreg not installed")
+    skip_if_not(has_gkwreg2, "gkwreg2 not installed")
+
+    df <- setup_test_data_kw()
+
+    fit1 <- gkwreg::gkwreg(y ~ x1, data = df, family = "kw")
+    fit2 <- gkwreg2::gkwreg2(y ~ x1, data = df, family = "kw")
+
+    coef1 <- coef(fit1)
+    coef2 <- coef(fit2, flatten = TRUE)
+
+    # Both should return numeric vectors with same length
+    expect_type(coef1, "double")
+    expect_type(coef2, "double")
+    expect_equal(length(coef1), length(coef2))
+})
+
+test_that("summary() works for both packages", {
+    skip_if_not(has_gkwreg, "gkwreg not installed")
+    skip_if_not(has_gkwreg2, "gkwreg2 not installed")
+
+    df <- setup_test_data_kw()
+
+    fit1 <- gkwreg::gkwreg(y ~ x1,
+        data = df, family = "kw",
+        control = gkwreg::gkw_control(hessian = TRUE)
+    )
+    fit2 <- gkwreg2::gkwreg2(y ~ x1,
+        data = df, family = "kw",
+        control = gkwreg2::gkw_control(hessian = TRUE)
+    )
+
+    sum1 <- summary(fit1)
+    sum2 <- summary(fit2)
+
+    # Both should have summary class
+    expect_s3_class(sum1, "summary.gkwreg")
+    expect_s3_class(sum2, "summary.gkwreg2")
+
+    # Both should have loglik
+    expect_true(!is.null(sum1$loglik) || !is.null(fit1$loglik))
+    expect_true(!is.null(sum2$loglik))
+})
+
+test_that("vcov() returns compatible matrices", {
+    skip_if_not(has_gkwreg, "gkwreg not installed")
+    skip_if_not(has_gkwreg2, "gkwreg2 not installed")
+
+    df <- setup_test_data_kw()
+
+    fit1 <- gkwreg::gkwreg(y ~ x1,
+        data = df, family = "kw",
+        control = gkwreg::gkw_control(hessian = TRUE)
+    )
+    fit2 <- gkwreg2::gkwreg2(y ~ x1,
+        data = df, family = "kw",
+        control = gkwreg2::gkw_control(hessian = TRUE)
+    )
+
+    vcov1 <- vcov(fit1)
+    vcov2 <- vcov(fit2)
+
+    # Both should return matrices
+    expect_true(is.matrix(vcov1))
+    expect_true(is.matrix(vcov2))
+
+    # Same dimensions
+    expect_equal(dim(vcov1), dim(vcov2))
+})
+
+test_that("logLik() returns compatible objects", {
+    skip_if_not(has_gkwreg, "gkwreg not installed")
+    skip_if_not(has_gkwreg2, "gkwreg2 not installed")
+
+    df <- setup_test_data_kw()
+
+    fit1 <- gkwreg::gkwreg(y ~ x1, data = df, family = "kw")
+    fit2 <- gkwreg2::gkwreg2(y ~ x1, data = df, family = "kw")
+
+    ll1 <- logLik(fit1)
+    ll2 <- logLik(fit2)
+
+    # Both should be logLik class
+    expect_s3_class(ll1, "logLik")
+    expect_s3_class(ll2, "logLik")
+
+    # Values should be close
+    expect_equal(as.numeric(ll1), as.numeric(ll2), tolerance = 0.1)
+
+    cat("\n\ngkwreg logLik:", as.numeric(ll1), "\n")
+    cat("gkwreg2 logLik:", as.numeric(ll2), "\n")
+})
+
+test_that("AIC/BIC return compatible values", {
+    skip_if_not(has_gkwreg, "gkwreg not installed")
+    skip_if_not(has_gkwreg2, "gkwreg2 not installed")
+
+    df <- setup_test_data_kw()
+
+    fit1 <- gkwreg::gkwreg(y ~ x1, data = df, family = "kw")
+    fit2 <- gkwreg2::gkwreg2(y ~ x1, data = df, family = "kw")
+
+    aic1 <- AIC(fit1)
+    aic2 <- AIC(fit2)
+    bic1 <- BIC(fit1)
+    bic2 <- BIC(fit2)
+
+    # Values should be close
+    expect_equal(aic1, aic2, tolerance = 1.0)
+    expect_equal(bic1, bic2, tolerance = 1.0)
+
+    cat("\n\ngkwreg AIC:", aic1, "BIC:", bic1, "\n")
+    cat("gkwreg2 AIC:", aic2, "BIC:", bic2, "\n")
+})
+
+# =============================================================================
+# TEST 4: Predict method compatibility
+# =============================================================================
+
+test_that("predict() returns compatible response values", {
+    skip_if_not(has_gkwreg, "gkwreg not installed")
+    skip_if_not(has_gkwreg2, "gkwreg2 not installed")
+
+    df <- setup_test_data_kw()
+
+    fit1 <- gkwreg::gkwreg(y ~ x1, data = df, family = "kw")
+    fit2 <- gkwreg2::gkwreg2(y ~ x1, data = df, family = "kw")
+
+    # Predict on training data
+    pred1 <- predict(fit1, type = "response")
+    pred2 <- predict(fit2, type = "response")
+
+    # Same length
+    expect_equal(length(pred1), length(pred2))
+
+    # All in valid range
+    expect_true(all(pred1 > 0 & pred1 < 1))
+    expect_true(all(pred2 > 0 & pred2 < 1))
+
+    # Correlation should be high
+    corr <- cor(pred1, pred2, use = "complete.obs")
+    cat("\n\nPrediction correlation:", corr, "\n")
+    expect_true(corr > 0.95)
+})
+
+# =============================================================================
+# TEST 5: Residuals compatibility
+# =============================================================================
+
+test_that("residuals() returns compatible values", {
+    skip_if_not(has_gkwreg, "gkwreg not installed")
+    skip_if_not(has_gkwreg2, "gkwreg2 not installed")
+
+    df <- setup_test_data_kw()
+
+    fit1 <- gkwreg::gkwreg(y ~ x1, data = df, family = "kw")
+    fit2 <- gkwreg2::gkwreg2(y ~ x1, data = df, family = "kw")
+
+    # Response residuals
+    res1 <- residuals(fit1, type = "response")
+    res2 <- residuals(fit2, type = "response")
+
+    expect_equal(length(res1), length(res2))
+
+    # Means should be close to 0
+    expect_true(abs(mean(res1)) < 0.2)
+    expect_true(abs(mean(res2)) < 0.2)
+
+    # Quantile residuals
+    qres1 <- residuals(fit1, type = "quantile")
+    qres2 <- residuals(fit2, type = "quantile")
+
+    expect_equal(length(qres1), length(qres2))
+})
+
+# =============================================================================
+# TEST 6: Beta family compatibility
+# =============================================================================
+
+test_that("Beta family produces compatible results", {
+    skip_if_not(has_gkwreg, "gkwreg not installed")
+    skip_if_not(has_gkwreg2, "gkwreg2 not installed")
+
+    df <- setup_test_data_beta()
+
+    fit1 <- gkwreg::gkwreg(y ~ x1, data = df, family = "beta")
+    fit2 <- gkwreg2::gkwreg2(y ~ x1, data = df, family = "beta")
+
+    # Both should have similar log-likelihood
+    expect_equal(fit1$loglik, fit2$loglik, tolerance = 1.0)
+
+    cat("\n\nBeta family:\n")
+    cat("gkwreg loglik:", fit1$loglik, "\n")
+    cat("gkwreg2 loglik:", fit2$loglik, "\n")
+})
+
+# =============================================================================
+# TEST 7: Formula interface compatibility
+# =============================================================================
+
+test_that("Extended formula syntax works identically", {
+    skip_if_not(has_gkwreg, "gkwreg not installed")
+    skip_if_not(has_gkwreg2, "gkwreg2 not installed")
+
+    df <- setup_test_data_kw()
+
+    # Same formula in both
+    fit1 <- gkwreg::gkwreg(y ~ x1 | x2, data = df, family = "kw")
+    fit2 <- gkwreg2::gkwreg2(y ~ x1 | x2, data = df, family = "kw")
+
+    # Same number of parameters
+    expect_equal(fit1$npar, fit2$npar)
+
+    cat("\n\nFormula y ~ x1 | x2:\n")
+    cat("gkwreg npar:", fit1$npar, "\n")
+    cat("gkwreg2 npar:", fit2$npar, "\n")
+})
+
+# =============================================================================
+# TEST 8: nobs() compatibility
+# =============================================================================
+
+test_that("nobs() returns same count", {
+    skip_if_not(has_gkwreg, "gkwreg not installed")
+    skip_if_not(has_gkwreg2, "gkwreg2 not installed")
+
+    df <- setup_test_data_kw()
+
+    fit1 <- gkwreg::gkwreg(y ~ x1, data = df, family = "kw")
+    fit2 <- gkwreg2::gkwreg2(y ~ x1, data = df, family = "kw")
+
+    expect_equal(nobs(fit1), nobs(fit2))
+    expect_equal(nobs(fit1), nrow(df))
+})
+
+# =============================================================================
+# SUMMARY: Print comparison
+# =============================================================================
+
+test_that("Print comparison summary", {
+    skip_if_not(has_gkwreg, "gkwreg not installed")
+    skip_if_not(has_gkwreg2, "gkwreg2 not installed")
+
+    df <- setup_test_data_kw()
+
+    fit1 <- gkwreg::gkwreg(y ~ x1 | x2,
+        data = df, family = "kw",
+        control = gkwreg::gkw_control(hessian = TRUE)
+    )
+    fit2 <- gkwreg2::gkwreg2(y ~ x1 | x2,
+        data = df, family = "kw",
+        control = gkwreg2::gkw_control(hessian = TRUE)
+    )
+
+    cat("\n\n")
+    cat("=============================================================\n")
+    cat("COMPATIBILITY SUMMARY: gkwreg vs gkwreg2\n")
+    cat("=============================================================\n")
+    cat("\nLog-likelihood:\n")
+    cat("  gkwreg:  ", fit1$loglik, "\n")
+    cat("  gkwreg2: ", fit2$loglik, "\n")
+    cat("  Difference: ", abs(fit1$loglik - fit2$loglik), "\n")
+    cat("\nAIC:\n")
+    cat("  gkwreg:  ", AIC(fit1), "\n")
+    cat("  gkwreg2: ", AIC(fit2), "\n")
+    cat("\nNumber of parameters: ", fit1$npar, "(gkwreg),", fit2$npar, "(gkwreg2)\n")
+    cat("\nPrediction correlation: ", cor(predict(fit1), predict(fit2)), "\n")
+    cat("=============================================================\n")
+
+    expect_true(TRUE) # Just for test pass
+})

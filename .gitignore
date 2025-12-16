@@ -1,0 +1,31 @@
+# R package specific
+*.o
+*.so
+*.dll
+*.rds
+*.Rhistory
+*.RData
+.Rproj.user/
+*.Rproj
+
+# Compiled code
+src/*.o
+src/*.so
+src/*.dll
+
+# Build artifacts
+*.tar.gz
+gkwreg2.Rcheck/
+
+# IDE
+.vscode/
+.idea/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Temp files
+*~
+\#*\#
+.#*

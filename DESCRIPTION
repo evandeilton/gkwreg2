@@ -1,0 +1,35 @@
+Package: gkwreg2
+Title: Generalized Kumaraswamy Regression Models for Bounded Data
+Version: 0.1.0
+Authors@R: c(person(given = "José Evandeilton",
+                    family = "Lopes",
+                    role = c("aut", "cre"),
+                    email = "evandeilton@gmail.com",
+                    comment = c(ORCID = "0009-0007-5887-4084")))
+Description: Provides regression modeling for data bounded in (0,1) using the 
+    Generalized Kumaraswamy distribution family. Implements maximum likelihood 
+    estimation via RcppArmadillo with analytical gradients from the gkwdist package.
+    Supports seven distribution families: GKw (5 parameters), BKw (4), KKw (4), 
+    EKw (3), McDonald/MC (3), Kw (2), and Beta (2). Features extended formula 
+    syntax for specifying different covariates per parameter.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends: R (>= 4.0.0)
+Imports:
+    gkwdist (>= 1.0.0),
+    Rcpp (>= 1.0.0),
+    Formula,
+    stats,
+    graphics,
+    grDevices,
+    utils
+LinkingTo: Rcpp, RcppArmadillo
+Suggests:
+    testthat (>= 3.0.0),
+    numDeriv,
+    ggplot2,
+    covr
+RoxygenNote: 7.3.3
+Roxygen: list(markdown = TRUE)
+URL: https://github.com/evandeilton/gkwreg2
+BugReports: https://github.com/evandeilton/gkwreg2/issues
