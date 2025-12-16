@@ -42,7 +42,7 @@ predict(
 
   `"link"`
 
-  :   Linear predictors (η)
+  :   Linear predictors (\\\eta\\)
 
   `"quantile"`
 

@@ -1,6 +1,7 @@
 # Compute gradient of negative log-likelihood for gkwreg2
 
-Uses chain rule: ∂ℓ/∂β_p = Xᵀ_p × (∂ℓ/∂θ_p × ∂θ_p/∂η_p)
+Uses chain rule: \\\partial\ell/\partial\beta_p = X^T_p \times
+(\partial\ell/\partial\theta_p \times \partial\theta_p/\partial\eta_p)\\
 
 ## Usage
 

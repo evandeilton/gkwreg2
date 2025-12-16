@@ -7,19 +7,23 @@ RcppArmadillo.
 
 ## Distribution Families
 
-- **gkw**: Generalized Kumaraswamy (5 parameters: α, β, γ, δ, λ)
+- **gkw**: Generalized Kumaraswamy (5 parameters: \\\alpha\\, \\\beta\\,
+  \\\gamma\\, \\\delta\\, \\\lambda\\)
 
-- **bkw**: Beta-Kumaraswamy (4 parameters: α, β, γ, δ)
+- **bkw**: Beta-Kumaraswamy (4 parameters: \\\alpha\\, \\\beta\\,
+  \\\gamma\\, \\\delta\\)
 
-- **kkw**: Kumaraswamy-Kumaraswamy (4 parameters: α, β, δ, λ)
+- **kkw**: Kumaraswamy-Kumaraswamy (4 parameters: \\\alpha\\, \\\beta\\,
+  \\\delta\\, \\\lambda\\)
 
-- **ekw**: Exponentiated Kumaraswamy (3 parameters: α, β, λ)
+- **ekw**: Exponentiated Kumaraswamy (3 parameters: \\\alpha\\,
+  \\\beta\\, \\\lambda\\)
 
-- **mc**: McDonald (3 parameters: γ, δ, λ)
+- **mc**: McDonald (3 parameters: \\\gamma\\, \\\delta\\, \\\lambda\\)
 
-- **kw**: Kumaraswamy (2 parameters: α, β)
+- **kw**: Kumaraswamy (2 parameters: \\\alpha\\, \\\beta\\)
 
-- **beta**: Beta (2 parameters: γ, δ)
+- **beta**: Beta (2 parameters: \\\gamma\\, \\\delta\\)
 
 ## Main Functions
 
@@ -40,6 +44,8 @@ RcppArmadillo.
 Useful links:
 
 - <https://github.com/evandeilton/gkwreg2>
+
+- <https://evandeilton.github.io/gkwreg2/>
 
 - Report bugs at <https://github.com/evandeilton/gkwreg2/issues>
 

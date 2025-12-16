@@ -176,10 +176,10 @@ fit_beta <- gkwreg2(y ~ x1 | x2, data = df, family = "beta")
 
 # Compare
 data.frame(
-    Family = c("Kumaraswamy", "Beta"),
-    LogLik = c(logLik(fit_kw), logLik(fit_beta)),
-    AIC = c(AIC(fit_kw), AIC(fit_beta)),
-    BIC = c(BIC(fit_kw), BIC(fit_beta))
+  Family = c("Kumaraswamy", "Beta"),
+  LogLik = c(logLik(fit_kw), logLik(fit_beta)),
+  AIC = c(AIC(fit_kw), AIC(fit_beta)),
+  BIC = c(BIC(fit_kw), BIC(fit_beta))
 )
 #>        Family   LogLik       AIC       BIC
 #> 1 Kumaraswamy 104.5208 -201.0417 -186.2265
@@ -194,14 +194,14 @@ Fine-tune the optimization with
 ``` r
 # Use BFGS optimizer with more iterations
 fit <- gkwreg2(y ~ x1,
-    data = df, family = "kw",
-    control = gkw_control(method = "BFGS", maxit = 500)
+  data = df, family = "kw",
+  control = gkw_control(method = "BFGS", maxit = 500)
 )
 
 # Fast fitting without standard errors
 fit_fast <- gkwreg2(y ~ x1,
-    data = df, family = "kw",
-    control = gkw_control(hessian = FALSE)
+  data = df, family = "kw",
+  control = gkw_control(hessian = FALSE)
 )
 ```
 

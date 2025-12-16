@@ -18,6 +18,6 @@ https://github.com/evandeilton/gkwreg2
       title = {gkwreg2: Generalized Kumaraswamy Regression Models for Bounded Data},
       author = {José Evandeilton Lopes},
       year = {2025},
-      note = {R package version 0.1.1},
+      note = {R package version 0.1.2},
       url = {https://github.com/evandeilton/gkwreg2},
     }

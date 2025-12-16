@@ -12,8 +12,9 @@ available_links(type = c("positive", "probability", "all"))
 
 - type:
 
-  Type of parameter: `"positive"` for positive parameters (α, β, γ, λ),
-  or `"probability"` for probability parameters (δ ∈ (0,1)).
+  Type of parameter: `"positive"` for positive parameters (\\\alpha\\,
+  \\\beta\\, \\\gamma\\, \\\lambda\\), or `"probability"` for
+  probability parameters (\\\delta\\ in (0,1)).
 
 ## Value
 
